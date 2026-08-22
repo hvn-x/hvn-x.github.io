@@ -1,33 +1,33 @@
-
+/* GLOBAL BODY STYLES */
 body {
-  font-family: 'Press Start 2P'}
-      
+  font-family: 'Press Start 2P', cursive;
+  background-color: transparent !important; /* Lets the star canvas at z-index: -1 shine through */
+  color: #ffffff;
+  margin: 0;
+  padding: 0;
+}
+
+/* LINKS */
 a:link {
-  color: blue;
+  color: #5E5DF0;
   background-color: transparent;
   text-decoration: none;
 }
 
 a:visited {
-  color: purple;
+  color: #8a2be2;
   background-color: transparent;
   text-decoration: none;
 }
 
-a:hover {
-  color: blue;
-  background-color: transparent;
-  text-decoration: underline;
-}
-
+a:hover,
 a:active {
-  color: blue;
+  color: #ffffff;
   background-color: transparent;
   text-decoration: underline;
 }
 
 /* SEARCH BAR */
-
 .search-bar {
   margin: 20px 0;
   text-align: center; 
@@ -40,17 +40,14 @@ a:active {
   border-radius: 5px;
 }
 
-body {
-  background-color: #0d0d0d !important;
-  color: #ffffff; /* keeps text white/readable */
-}
-
-#tsparticles {
+/* PARTICLES / CANVAS LAYER */
+#tsparticles,
+#star-canvas {
   position: fixed;
   top: 0;
   left: 0;
   width: 100vw;
   height: 100vh;
   z-index: -1;
-  pointer-events: none; /* lets clicks pass through to your buttons/links */
+  pointer-events: none;
 }
