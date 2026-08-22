@@ -81,31 +81,50 @@ document.addEventListener("DOMContentLoaded", (event) => {
     });
 });
 
-// 1. Create and inject the tsparticles div
-const particleDiv = document.createElement('div');
-particleDiv.id = 'tsparticles';
-document.body.prepend(particleDiv);
+document.addEventListener("DOMContentLoaded", () => {
+  // 1. Create canvas element
+  const canvas = document.createElement("canvas");
+  canvas.id = "star-canvas";
+  document.body.prepend(canvas);
 
-// 2. Dynamically load the tsparticles CDN script
-const script = document.createElement('script');
-script.src = 'https://cdnjs.cloudflare.com/ajax/libs/tsparticles/3.9.1/tsparticles.bundle.min.js';
-script.onload = () => {
-  // 3. Init particles once the CDN loads
-  tsParticles.load({
-    id: "tsparticles",
-    options: {
-      fpsLimit: 60,
-      particles: {
-        number: { value: 60 },
-        color: { value: "#ffffff" },
-        shape: { type: "circle" },
-        opacity: { value: { min: 0.2, max: 0.7 } },
-        size: { value: { min: 1, max: 3 } },
-        move: { enable: true, speed: 0.5 },
-        links: { enable: true, distance: 120, color: "#4a4a4a", opacity: 0.3 }
-      },
-      detectRetina: true
-    }
+  // 2. Set full screen styling via JS
+  Object.assign(canvas.style, {
+    position: "fixed",
+    top: "0",
+    left: "0",
+    width: "100vw",
+    height: "100vh",
+    zIndex: "-1",
+    pointerEvents: "none"
   });
-};
-document.head.appendChild(script);
+
+  const ctx = canvas.getContext("2d");
+  let width, height, stars = [];
+
+  function resize() {
+    width = canvas.width = window.innerWidth;
+    height = canvas.height = window.innerHeight;
+    stars = Array.from({ length: 80 }, () => ({
+      x: Math.random() * width,
+      y: Math.random() * height,
+      size: Math.random() * 2 + 0.5,
+      alpha: Math.random(),
+      speed: Math.random() * 0.02 + 0.005
+    }));
+  }
+
+  function animate() {
+    ctx.clearRect(0, 0, width, height);
+    stars.forEach(s => {
+      s.alpha += s.speed;
+      if (s.alpha > 1 || s.alpha < 0) s.speed = -s.speed;
+      ctx.fillStyle = `rgba(255, 255, 255, ${Math.abs(s.alpha)})`;
+      ctx.fillRect(s.x, s.y, s.size, s.size); // pixelated star rendering
+    });
+    requestAnimationFrame(animate);
+  }
+
+  window.addEventListener("resize", resize);
+  resize();
+  animate();
+});
