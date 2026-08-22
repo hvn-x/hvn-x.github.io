@@ -80,3 +80,32 @@ document.addEventListener("DOMContentLoaded", (event) => {
       splashText();
     });
 });
+
+// 1. Create and inject the tsparticles div
+const particleDiv = document.createElement('div');
+particleDiv.id = 'tsparticles';
+document.body.prepend(particleDiv);
+
+// 2. Dynamically load the tsparticles CDN script
+const script = document.createElement('script');
+script.src = 'https://cdnjs.cloudflare.com/ajax/libs/tsparticles/3.9.1/tsparticles.bundle.min.js';
+script.onload = () => {
+  // 3. Init particles once the CDN loads
+  tsParticles.load({
+    id: "tsparticles",
+    options: {
+      fpsLimit: 60,
+      particles: {
+        number: { value: 60 },
+        color: { value: "#ffffff" },
+        shape: { type: "circle" },
+        opacity: { value: { min: 0.2, max: 0.7 } },
+        size: { value: { min: 1, max: 3 } },
+        move: { enable: true, speed: 0.5 },
+        links: { enable: true, distance: 120, color: "#4a4a4a", opacity: 0.3 }
+      },
+      detectRetina: true
+    }
+  });
+};
+document.head.appendChild(script);
