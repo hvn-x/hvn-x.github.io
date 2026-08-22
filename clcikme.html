@@ -1,62 +1,70 @@
 <!DOCTYPE html>
-<html>
-  <head>
-      <title>hvn-x</title>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>hvn-x</title>
     <link rel="icon" type="image/jpg" href="favicon.jpg?v2" />
-   <link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
     <style>
-body {
-  background-image: url('spcae.gif');
-  background-attachment: fixed; 
-  background-size: 100% 100%;
-  font-family: 'Press Start 2P'
-}
-      
-a:link {
-  color: blue;
-  background-color: transparent;
-  text-decoration: none;
-}
+        body {
+            background-image: url('spcae.gif');
+            background-attachment: fixed; 
+            background-size: 100% 100%;
+            font-family: 'Press Start 2P', cursive;
+            color: white;
+        }
+            
+        a:link, a:visited {
+            color: #5E5DF0;
+            background-color: transparent;
+            text-decoration: none;
+        }
 
-a:visited {
-  color: purple;
-  background-color: transparent;
-  text-decoration: none;
-}
+        a:hover, a:active {
+            color: #ffffff;
+            background-color: transparent;
+            text-decoration: underline;
+        }
 
-a:hover {
-  color: blue;
-  background-color: transparent;
-  text-decoration: underline;
-}
-
-a:active {
-  color: blue;
-  background-color: transparent;
-  text-decoration: underline;
-}
-</style>
-  </head>
-  <body>
+        .back-btn {
+            width: 84px;
+            height: 84px;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
     <main>
-	<img src="back.png" alt="BACK" style="width:84px;height:84px;" onclick="window.open('', '_self', ''); window.close();" style="cursor: pointer;" />
-      <center>
-        <h1><FONT COLOR="#ffffff">Links for games to request</h1>  
-  
-  <br><h2 class="links"><a href="https://github.com/mathgames66/mathgames66.github.io/tree/main/games/html5" target="_blank"> #1 mathgames66</a></h2></li>
-  <br><h2 class="links"><a href="https://github.com/D3ch/hell/tree/main/Games" target="_blank"> #2 he1l</a></h2></li>
-  <br><h2 class="links"><a href="https://github.com/3kh0/website-v2/tree/main/projects" target="_blank"> #3 3kh0 v2 (v3&v4 are banned off of github)</a></h2>
-  <br><h2 class="links"><a href="https://github.com/mackeylol/copyofmasite" target="_blank"> #4 Capy Games</a></h2>
-  <br><h2 class="links">any other games, flash gmaes, mainly HTML files please</h2>
-	<h1><FONT COLOR="#ffffff">Request a game</h1>
-	      <h3 class="idk"><a href="https://discord.gg/43D6ds9X3P" target="_blank">Discord</h3>
-    <a href="mailto:nintendobi222+addgame@gmail.com?subject=I%20would%20like%20to%20add%20my%20game%20to%20your%20website&body=%3CPlease%20Include%20Game%20Name%2C%20Your%20Name%2FCredits%2C%20and%20The%20Game%20File(s)%3E">Add your own game :)</a>	  
-	      <br<iframe src="https://docs.google.com/forms/d/e/1FAIpQLSdgvd4GnfQ1LLJSSxqifrDwziS9aQ1x2Mle4b956-zAG-uoGw/viewform?embedded=true" width="640" height="1140" frameborder="0" marginheight="0" marginwidth="0"></iframe>
-      </center>
+        <!-- Points back to home page -->
+        <a href="index.html">
+            <img src="back.png" alt="BACK" class="back-btn" />
+        </a>
+
+        <center>
+            <h1>Links for games to request</h1>  
+            
+            <br><h2 class="links"><a href="https://github.com/mathgames66/mathgames66.github.io/tree/main/games/html5" target="_blank">#1 mathgames66</a></h2>
+            <br><h2 class="links"><a href="https://github.com/D3ch/hell/tree/main/Games" target="_blank">#2 he1l</a></h2>
+            <br><h2 class="links"><a href="https://github.com/3kh0/website-v2/tree/main/projects" target="_blank">#3 3kh0 v2</a></h2>
+            <br><h2 class="links"><a href="https://github.com/mackeylol/copyofmasite" target="_blank">#4 Capy Games</a></h2>
+            <br><h3>Any other HTML5 / Flash game files</h3>
+
+            <br><br>
+            <h1>Request a Game</h1>
+            <h3 class="idk"><a href="https://discord.gg/43D6ds9X3P" target="_blank">Discord</a></h3>
+            
+            <!-- Replace with your email if you want mail requests -->
+            <a href="mailto:your-email@gmail.com?subject=Game%20Request&body=Game%20Name:">Add your own game :)</a>      
+            
+            <br><br>
+            <!-- Replace src with your own Google Form link -->
+            <iframe src="https://docs.google.com/forms/d/e/1FAIpQLSdgvd4GnfQ1LLJSSxqifrDwziS9aQ1x2Mle4b956-zAG-uoGw/viewform?embedded=true" width="640" height="1140" frameborder="0" marginheight="0" marginwidth="0"></iframe>
+        </center>
     </main>
-	<script src="main.js"></script>
-  </body>
+    <script src="main.js"></script>
+</body>
 </html>
