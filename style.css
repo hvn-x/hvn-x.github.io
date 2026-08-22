@@ -1,7 +1,7 @@
 /* GLOBAL BODY STYLES */
 body {
   font-family: 'Press Start 2P', cursive;
-  background-color: transparent !important; /* Lets the star canvas at z-index: -1 shine through */
+  background-color: #0d0d0d !important; /* Lets the star canvas at z-index: -1 shine through */
   color: #ffffff;
   margin: 0;
   padding: 0;
