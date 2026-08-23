@@ -1,6 +1,6 @@
 /* GLOBAL BODY STYLES */
 body {
-  font-family: 'Press Start 2P', cursive;
+  font-family: 'MinecraftSeven_v2';
   background-color: #0d0d0d !important; /* Lets the star canvas at z-index: -1 shine through */
   color: #ffffff;
   margin: 0;
