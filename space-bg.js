@@ -58,9 +58,8 @@ function render() {
   const bhX = width * 0.88;
   const bhY = height * 0.28;
   const coreRadius = 32;
-  angle += 0.015;
 
-  // Initialize particles once if needed
+  // Initialize particles once
   if (!window.bhParticles) {
     window.bhParticles = [];
     for (let i = 0; i < 35; i++) {
@@ -74,7 +73,7 @@ function render() {
     }
   }
 
-  // 1. Soft Ambient Space Glow (Far background)
+  // 1. Far Ambient Glow
   const outerGlow = ctx.createRadialGradient(bhX, bhY, coreRadius, bhX, bhY, 150);
   outerGlow.addColorStop(0, 'rgba(255, 100, 0, 0.25)');
   outerGlow.addColorStop(0.5, 'rgba(255, 40, 0, 0.08)');
@@ -84,52 +83,66 @@ function render() {
   ctx.arc(bhX, bhY, 150, 0, Math.PI * 2);
   ctx.fill();
 
-  // 2. Main Accretion Ring (Tilted Oval Behind & Around)
-  const ringGrad = ctx.createRadialGradient(bhX, bhY, coreRadius * 0.9, bhX, bhY, 110);
-  ringGrad.addColorStop(0, '#ffcc00');
+  // 2. Main Accretion Ring (Background Glow)
+  const ringGrad = ctx.createRadialGradient(bhX, bhY, coreRadius, bhX, bhY, 110);
+  ringGrad.addColorStop(0, '#ffaa00');
   ringGrad.addColorStop(0.3, '#ff5500');
-  ringGrad.addColorStop(0.7, 'rgba(200, 30, 0, 0.3)');
+  ringGrad.addColorStop(0.7, 'rgba(200, 30, 0, 0.25)');
   ringGrad.addColorStop(1, 'transparent');
 
   ctx.save();
   ctx.fillStyle = ringGrad;
   ctx.translate(bhX, bhY);
-  ctx.scale(1, 0.28); // Flatten to create disk angle
+  ctx.scale(1, 0.28);
   ctx.beginPath();
   ctx.arc(0, 0, 110, 0, Math.PI * 2);
   ctx.fill();
   ctx.restore();
 
-  // 3. Swirling Matter Particles
+  // Update positions for all particles
   for (let p of window.bhParticles) {
     p.angle += p.speed;
     p.dist -= 0.12;
     if (p.dist < coreRadius + 2) p.dist = Math.random() * 70 + coreRadius + 15;
-
-    const px = bhX + Math.cos(p.angle) * p.dist;
-    const py = bhY + Math.sin(p.angle) * (p.dist * 0.28);
-
-    ctx.fillStyle = p.color;
-    ctx.beginPath();
-    ctx.arc(px, py, p.size, 0, Math.PI * 2);
-    ctx.fill();
+    p.x = bhX + Math.cos(p.angle) * p.dist;
+    p.y = bhY + Math.sin(p.angle) * (p.dist * 0.28);
   }
 
-  // 4. Solid Black Void (Drawn AFTER background rings so core stays pure black)
+  // 3. Draw BACK particles (behind the event horizon)
+  for (let p of window.bhParticles) {
+    if (p.y < bhY) {
+      ctx.fillStyle = p.color;
+      ctx.beginPath();
+      ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
+      ctx.fill();
+    }
+  }
+
+  // 4. Solid Pitch Black Event Horizon Center
   ctx.fillStyle = '#000000';
   ctx.beginPath();
   ctx.arc(bhX, bhY, coreRadius, 0, Math.PI * 2);
   ctx.fill();
 
-  // 5. Thin Inner Photon Ring (Crisp edge glow around black void)
-  const photonRing = ctx.createRadialGradient(bhX, bhY, coreRadius - 1, bhX, bhY, coreRadius + 5);
-  photonRing.addColorStop(0, 'rgba(255, 255, 255, 0.9)');
-  photonRing.addColorStop(0.4, '#ff9900');
-  photonRing.addColorStop(1, 'transparent');
-  ctx.fillStyle = photonRing;
+  // 5. Thin Outer Rim Glow (Strictly OUTSIDE the core)
+  ctx.strokeStyle = '#ffaa00';
+  ctx.lineWidth = 2;
+  ctx.shadowColor = '#ff5500';
+  ctx.shadowBlur = 10;
   ctx.beginPath();
-  ctx.arc(bhX, bhY, coreRadius + 5, 0, Math.PI * 2);
-  ctx.fill();
+  ctx.arc(bhX, bhY, coreRadius + 1, 0, Math.PI * 2);
+  ctx.stroke();
+  ctx.shadowBlur = 0; // Reset blur for other canvas draws
+
+  // 6. Draw FRONT particles (in front of the event horizon)
+  for (let p of window.bhParticles) {
+    if (p.y >= bhY) {
+      ctx.fillStyle = p.color;
+      ctx.beginPath();
+      ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
+      ctx.fill();
+    }
+  }
 
   requestAnimationFrame(render);
 }
