@@ -57,6 +57,23 @@ a.game:hover {
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
 }
 
+h1, h2 {
+  color: #ffffff;
+  text-shadow: 0 0 15px rgba(94, 93, 240, 0.6);
+  letter-spacing: 1px;
+}
+
+::-webkit-scrollbar {
+  width: 8px;
+}
+::-webkit-scrollbar-track {
+  background: #000000;
+}
+::-webkit-scrollbar-thumb {
+  background: #5E5DF0;
+  border-radius: 4px;
+}
+
 /* SEARCH BAR */
 .search-bar {
   margin: 20px 0;
