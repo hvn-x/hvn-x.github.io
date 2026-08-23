@@ -27,6 +27,36 @@ a:active {
   text-decoration: underline;
 }
 
+/* Container around your links */
+.game-list-container {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 12px;
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 20px;
+}
+
+/* Individual game link cards */
+a.game {
+  display: block;
+  background: rgba(20, 20, 25, 0.6);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 8px;
+  padding: 10px;
+  color: #a7a6ff;
+  text-decoration: none;
+  transition: all 0.2s ease;
+}
+
+a.game:hover {
+  background: rgba(94, 93, 240, 0.15);
+  border-color: #5E5DF0;
+  color: #ffffff;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
+}
+
 /* SEARCH BAR */
 .search-bar {
   margin: 20px 0;
