@@ -1,93 +1,100 @@
+// SEARCH BAR (Only runs if search input exists on page)
 const searchInput = document.getElementById('search-input');
-
-searchInput.addEventListener('input', () => {
+if (searchInput) {
+  searchInput.addEventListener('input', () => {
     const searchTerm = searchInput.value.toLowerCase();
     const games = Array.from(document.getElementsByClassName('game'));
 
-    // Filter games based on the search term
     const matchedGames = games.filter(game => game.innerText.toLowerCase().includes(searchTerm));
 
-    // Clear the visible games
-    games.forEach(game => game.style.display = 'none'); // Hide all games
+    games.forEach(game => game.style.display = 'none');
+    matchedGames.forEach(game => game.style.display = 'block');
+  });
+}
 
-    // Show matched games
-    matchedGames.forEach(game => {
-        game.style.display = 'block'; // Show matched games
-    });
-});
-
-
-
+// PANIC KEY (Press 'Q' to redirect)
 window.addEventListener("keydown", function (e) {
   if (e.key === "q" || e.key === "Q") {
-      // Change the title and favicon
-      document.title = "Gmail"; // Set the new title
-      
-      // Create a new link element for the favicon
-      let link = document.createElement('link');
-      link.rel = 'icon';
-      link.href = 'https://upload.wikimedia.org/wikipedia/commons/thumb/7/7e/Gmail_icon_%282020%29.svg/768px-Gmail_icon_%282020%29.svg.png'; // URL to Google's favicon
-      document.head.appendChild(link);
-      
-      // Open Google Classroom in a new tab
-      window.location.href("https://drive.google.com", "_blank");
+    document.title = "Gmail";
+    
+    let link = document.createElement('link');
+    link.rel = 'icon';
+    link.href = 'https://upload.wikimedia.org/wikipedia/commons/thumb/7/7e/Gmail_icon_%282020%29.svg/768px-Gmail_icon_%282020%29.svg.png';
+    document.head.appendChild(link);
+    
+    window.location.href = "https://drive.google.com";
   }
 });
 
-
-
-document.onkeydown = function (e) {
+// ENTER KEY FOR NEW SPLASH TEXT
+document.addEventListener("keydown", function (e) {
   if (e.key === "Enter") {
-      splashText();
+    splashText();
   }
-};document.querySelector('button').addEventListener('click', () => {
-  while (true) {}
 });
 
+// BUTTON LISTENER (Safely handled)
+const crashBtn = document.querySelector('button');
+if (crashBtn) {
+  crashBtn.addEventListener('click', () => {
+    while (true) {} // Freezes page if button clicked
+  });
+}
+
+// FETCH SPLASH TEXTS
 var says = [];
-fetch('https://raw.githubusercontent.com/Nintendoboi222/games/refs/heads/main/says.txt')
+fetch('https://raw.githubusercontent.com/hvn-x/games/refs/heads/main/says.txt')
   .then(response => response.text())
   .then(text => {
     says = text.split('\n').filter(line => line.trim() !== '');
     splashText();
-  });
-
+  })
+  .catch(err => console.log("Splash fetch skipped or failed"));
 
 function splashText() {
-  document.querySelector(".Index-SplashText").innerHTML =
-    says[Math.floor(Math.random() * says.length)];
+  const splashContainer = document.querySelector(".Index-SplashText");
+  if (splashContainer && says.length > 0) {
+    splashContainer.innerHTML = says[Math.floor(Math.random() * says.length)];
+  }
 }
 
-document.addEventListener("DOMContentLoaded", (event) => {
+// EXTRA DYNAMIC SPLASH TEXTS (IP / DISCORD)
+document.addEventListener("DOMContentLoaded", () => {
   splashText();
   
   fetch("https://ipv4.wtfismyip.com/json")
     .then((response) => response.json())
     .then((data) => {
-        proxylocation = data.YourFuckingLocation;
-        ipAddress = data.YourFuckingIPAddress;
-        isp = data.YourFuckingISP;
+        const proxylocation = data.YourFuckingLocation;
+        const ipAddress = data.YourFuckingIPAddress;
+        const isp = data.YourFuckingISP;
         says.push(`Sending missile to ${proxylocation}😈`);
         says.push(`umm your ip is ${ipAddress}`);
         says.push(`nice isp, "${isp}"`);
         splashText();
-    });
+    })
+    .catch(() => {});
+
   fetch("https://discord.com/api/guilds/1288933489818865784/widget.json")
     .then((response) => response.json())
     .then((data) => {
-      invite = data.instant_invite;
-      says.push(`Join? "${invite}"`);
-      splashText();
-    });
+      const invite = data.instant_invite;
+      if (invite) {
+        says.push(`Join? "${invite}"`);
+        splashText();
+      }
+    })
+    .catch(() => {});
 });
 
+// STAR CANVAS BACKGROUND
 document.addEventListener("DOMContentLoaded", () => {
-  // 1. Create canvas element
+  if (document.getElementById("star-canvas")) return; // Prevent duplicate canvases
+
   const canvas = document.createElement("canvas");
   canvas.id = "star-canvas";
   document.body.prepend(canvas);
 
-  // 2. Set full screen styling via JS
   Object.assign(canvas.style, {
     position: "fixed",
     top: "0",
@@ -119,7 +126,7 @@ document.addEventListener("DOMContentLoaded", () => {
       s.alpha += s.speed;
       if (s.alpha > 1 || s.alpha < 0) s.speed = -s.speed;
       ctx.fillStyle = `rgba(255, 255, 255, ${Math.abs(s.alpha)})`;
-      ctx.fillRect(s.x, s.y, s.size, s.size); // pixelated star rendering
+      ctx.fillRect(s.x, s.y, s.size, s.size);
     });
     requestAnimationFrame(animate);
   }
