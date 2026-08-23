@@ -104,6 +104,65 @@ h1, h2 {
   box-shadow: 0 0 20px rgba(255, 170, 0, 0.5);
 }
 
+/* FOOTER NOTE */
+.footer-note {
+  text-align: center;
+  font-size: 15px;
+  color: #ffb870;
+  margin-top: 40px;
+  letter-spacing: 0.5px;
+}
+
+/* FOOTER NAV BUTTONS */
+.footer-nav {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 10px;
+  margin: 18px 0 35px 0;
+}
+
+.footer-nav a {
+  background: rgba(25, 15, 10, 0.5);
+  border: 1px solid rgba(255, 136, 0, 0.2);
+  border-radius: 6px;
+  padding: 8px 14px;
+  color: #ffb870;
+  font-size: 13px;
+  text-decoration: none !important;
+  transition: all 0.2s ease;
+  backdrop-filter: blur(4px);
+}
+
+.footer-nav a:hover {
+  background: rgba(255, 102, 0, 0.2);
+  border-color: #ff6b00;
+  color: #ffffff;
+  transform: translateY(-2px);
+  box-shadow: 0 0 10px rgba(255, 107, 0, 0.4);
+}
+
+/* DISCORD EMBED WRAPPER */
+.discord-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-bottom: 50px;
+}
+
+.discord-container h3 {
+  margin-bottom: 12px;
+  font-size: 16px;
+  color: #ffffff;
+  text-shadow: 0 0 10px rgba(255, 107, 0, 0.5);
+}
+
+.discord-container iframe {
+  border-radius: 12px;
+  border: 1px solid rgba(255, 136, 0, 0.25);
+  box-shadow: 0 0 20px rgba(0, 0, 0, 0.8), 0 0 15px rgba(255, 107, 0, 0.15);
+}
+
 /* CANVAS LAYER */
 #star-canvas {
   position: fixed;
