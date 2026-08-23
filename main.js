@@ -58,35 +58,6 @@ function splashText() {
   }
 }
 
-// EXTRA DYNAMIC SPLASH TEXTS (IP / DISCORD)
-document.addEventListener("DOMContentLoaded", () => {
-  splashText();
-  
-  fetch("https://ipv4.wtfismyip.com/json")
-    .then((response) => response.json())
-    .then((data) => {
-        const proxylocation = data.YourFuckingLocation;
-        const ipAddress = data.YourFuckingIPAddress;
-        const isp = data.YourFuckingISP;
-        says.push(`Sending missile to ${proxylocation}😈`);
-        says.push(`umm your ip is ${ipAddress}`);
-        says.push(`nice isp, "${isp}"`);
-        splashText();
-    })
-    .catch(() => {});
-
-  fetch("https://discord.com/api/guilds/1288933489818865784/widget.json")
-    .then((response) => response.json())
-    .then((data) => {
-      const invite = data.instant_invite;
-      if (invite) {
-        says.push(`Join? "${invite}"`);
-        splashText();
-      }
-    })
-    .catch(() => {});
-});
-
 // STAR CANVAS BACKGROUND
 document.addEventListener("DOMContentLoaded", () => {
   if (document.getElementById("star-canvas")) return; // Prevent duplicate canvases
