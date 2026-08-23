@@ -1,7 +1,7 @@
 /* GLOBAL BODY STYLES */
 body {
   font-family: 'Montserrat', sans-serif;
-  background-color: #0d0d0d !important; /* Lets the star canvas at z-index: -1 shine through */
+  background-color: #08080a !important; 
   color: #ffffff;
   margin: 0;
   padding: 0;
@@ -9,13 +9,13 @@ body {
 
 /* LINKS */
 a:link {
-  color: #5E5DF0;
+  color: #ff8800;
   background-color: transparent;
   text-decoration: none;
 }
 
 a:visited {
-  color: #8a2be2;
+  color: #e65c00;
   background-color: transparent;
   text-decoration: none;
 }
@@ -43,27 +43,28 @@ a.game {
   align-items: center;
   justify-content: center;
   text-align: center;
-  background: rgba(20, 20, 25, 0.6);
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  background: rgba(25, 15, 10, 0.4);
+  border: 1px solid rgba(255, 136, 0, 0.15);
   border-radius: 8px;
   padding: 12px 10px;
-  color: #a7a6ff;
+  color: #ffb870;
   text-decoration: none !important;
   transition: all 0.2s ease;
   font-size: 14px;
+  backdrop-filter: blur(4px);
 }
 
 a.game:hover {
-  background: rgba(94, 93, 240, 0.15);
-  border-color: #5E5DF0;
+  background: rgba(255, 102, 0, 0.18);
+  border-color: #ff6b00;
   color: #ffffff;
   transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(94, 93, 240, 0.3);
+  box-shadow: 0 4px 15px rgba(255, 107, 0, 0.35);
 }
 
 h1, h2 {
   color: #ffffff;
-  text-shadow: 0 0 15px rgba(94, 93, 240, 0.6);
+  text-shadow: 0 0 15px rgba(255, 107, 0, 0.6);
   letter-spacing: 1px;
 }
 
@@ -72,10 +73,10 @@ h1, h2 {
   width: 8px;
 }
 ::-webkit-scrollbar-track {
-  background: #000000;
+  background: #050505;
 }
 ::-webkit-scrollbar-thumb {
-  background: #5E5DF0;
+  background: #ff6b00;
   border-radius: 4px;
 }
 
@@ -86,25 +87,24 @@ h1, h2 {
 }
 
 #search-input {
-  background: rgba(15, 15, 20, 0.8);
+  background: rgba(20, 12, 8, 0.85);
   color: #ffffff;
-  border: 1.5px solid #5E5DF0;
+  border: 1.5px solid #ff6b00;
   border-radius: 6px;
   padding: 12px 16px;
   width: 320px;
   outline: none;
-  box-shadow: 0 0 12px rgba(94, 93, 240, 0.25);
+  box-shadow: 0 0 12px rgba(255, 107, 0, 0.25);
   transition: all 0.2s ease;
   font-family: inherit;
 }
 
 #search-input:focus {
-  border-color: #8a2be2;
-  box-shadow: 0 0 18px rgba(138, 43, 226, 0.5);
+  border-color: #ffaa00;
+  box-shadow: 0 0 20px rgba(255, 170, 0, 0.5);
 }
 
-/* PARTICLES / CANVAS LAYER */
-#tsparticles,
+/* CANVAS LAYER */
 #star-canvas {
   position: fixed;
   top: 0;
