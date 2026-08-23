@@ -1,6 +1,6 @@
 /* GLOBAL BODY STYLES */
 body {
-  font-family: 'Montserrat SemiBold';
+  font-family: 'Montserrat', sans-serif;
   background-color: #0d0d0d !important; /* Lets the star canvas at z-index: -1 shine through */
   color: #ffffff;
   margin: 0;
@@ -27,26 +27,30 @@ a:active {
   text-decoration: underline;
 }
 
-/* Container around your links */
+/* Container around your game cards */
 .game-list-container {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
   gap: 12px;
-  max-width: 800px;
+  max-width: 900px;
   margin: 0 auto;
   padding: 20px;
 }
 
 /* Individual game link cards */
 a.game {
-  display: block;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
   background: rgba(20, 20, 25, 0.6);
   border: 1px solid rgba(255, 255, 255, 0.1);
   border-radius: 8px;
-  padding: 10px;
+  padding: 12px 10px;
   color: #a7a6ff;
-  text-decoration: none;
+  text-decoration: none !important;
   transition: all 0.2s ease;
+  font-size: 14px;
 }
 
 a.game:hover {
@@ -54,7 +58,7 @@ a.game:hover {
   border-color: #5E5DF0;
   color: #ffffff;
   transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
+  box-shadow: 0 4px 12px rgba(94, 93, 240, 0.3);
 }
 
 h1, h2 {
@@ -63,6 +67,7 @@ h1, h2 {
   letter-spacing: 1px;
 }
 
+/* SCROLLBAR */
 ::-webkit-scrollbar {
   width: 8px;
 }
@@ -90,6 +95,7 @@ h1, h2 {
   outline: none;
   box-shadow: 0 0 12px rgba(94, 93, 240, 0.25);
   transition: all 0.2s ease;
+  font-family: inherit;
 }
 
 #search-input:focus {
