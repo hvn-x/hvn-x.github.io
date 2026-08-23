@@ -3,6 +3,7 @@ const ctx = canvas.getContext('2d');
 
 let width, height;
 let stars = [];
+let angle = 0;
 
 function resize() {
   width = canvas.width = window.innerWidth;
@@ -24,8 +25,6 @@ function initStars() {
   }
 }
 
-let angle = 0;
-
 function drawNebula(x, y, radius, color) {
   const gradient = ctx.createRadialGradient(x, y, 0, x, y, radius);
   gradient.addColorStop(0, color);
@@ -42,7 +41,7 @@ function render() {
   // 1. NEBULAS
   drawNebula(width * 0.2, height * 0.3, 400, 'rgba(255, 90, 0, 0.08)');
   drawNebula(width * 0.8, height * 0.7, 500, 'rgba(180, 40, 0, 0.06)');
-  drawNebula(width * 0.5, height * 0.5, 600, 'rgba(100, 20, 120, 0.04)'); // subtle deep space contrast
+  drawNebula(width * 0.5, height * 0.5, 600, 'rgba(100, 20, 120, 0.04)');
 
   // 2. STARS
   for (let star of stars) {
@@ -55,7 +54,7 @@ function render() {
     ctx.fill();
   }
 
-// 3. UPGRADED BLACK HOLE
+  // 3. UPGRADED BLACK HOLE
   const bhX = width * 0.88;
   const bhY = height * 0.28;
   const coreRadius = 38;
@@ -76,7 +75,6 @@ function render() {
   ctx.translate(bhX, bhY);
   ctx.rotate(angle);
 
-  // Back Disk (tilt effect)
   const diskGrad = ctx.createRadialGradient(0, 0, coreRadius * 0.8, 0, 0, 140);
   diskGrad.addColorStop(0, '#ffffff');
   diskGrad.addColorStop(0.2, '#ffaa00');
@@ -85,7 +83,7 @@ function render() {
   diskGrad.addColorStop(1, 'transparent');
 
   ctx.fillStyle = diskGrad;
-  ctx.scale(1, 0.28); // Flatten to create accretion angle
+  ctx.scale(1, 0.28);
   ctx.beginPath();
   ctx.arc(0, 0, 140, 0, Math.PI * 2);
   ctx.fill();
@@ -106,6 +104,9 @@ function render() {
   ctx.beginPath();
   ctx.arc(bhX, bhY, coreRadius, 0, Math.PI * 2);
   ctx.fill();
+
+  requestAnimationFrame(render);
+}
 
 window.addEventListener('resize', resize);
 resize();
