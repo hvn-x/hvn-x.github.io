@@ -55,42 +55,57 @@ function render() {
     ctx.fill();
   }
 
-  // 3. BLACK HOLE (Top Right Corner area)
-  const bhX = width * 0.85;
-  const bhY = height * 0.25;
-  angle += 0.01;
+// 3. UPGRADED BLACK HOLE
+  const bhX = width * 0.88;
+  const bhY = height * 0.28;
+  const coreRadius = 38;
+  angle += 0.012;
 
-  // Accretion Disk Glow
+  // Outer Gravitational Lensing Glow
+  const outerGlow = ctx.createRadialGradient(bhX, bhY, coreRadius, bhX, bhY, 180);
+  outerGlow.addColorStop(0, 'rgba(255, 120, 0, 0.4)');
+  outerGlow.addColorStop(0.3, 'rgba(255, 60, 0, 0.15)');
+  outerGlow.addColorStop(1, 'transparent');
+  ctx.fillStyle = outerGlow;
+  ctx.beginPath();
+  ctx.arc(bhX, bhY, 180, 0, Math.PI * 2);
+  ctx.fill();
+
+  // Swirling Accretion Disk Ring
   ctx.save();
   ctx.translate(bhX, bhY);
   ctx.rotate(angle);
-  
-  const diskGrad = ctx.createRadialGradient(0, 0, 25, 0, 0, 110);
-  diskGrad.addColorStop(0, 'rgba(255, 200, 100, 0.9)');
-  diskGrad.addColorStop(0.3, 'rgba(255, 100, 0, 0.5)');
-  diskGrad.addColorStop(0.7, 'rgba(180, 30, 0, 0.2)');
+
+  // Back Disk (tilt effect)
+  const diskGrad = ctx.createRadialGradient(0, 0, coreRadius * 0.8, 0, 0, 140);
+  diskGrad.addColorStop(0, '#ffffff');
+  diskGrad.addColorStop(0.2, '#ffaa00');
+  diskGrad.addColorStop(0.5, '#ff4500');
+  diskGrad.addColorStop(0.8, 'rgba(180, 20, 0, 0.3)');
   diskGrad.addColorStop(1, 'transparent');
 
   ctx.fillStyle = diskGrad;
-  ctx.scale(1, 0.35); // Squish into an elliptical ring
+  ctx.scale(1, 0.28); // Flatten to create accretion angle
   ctx.beginPath();
-  ctx.arc(0, 0, 110, 0, Math.PI * 2);
+  ctx.arc(0, 0, 140, 0, Math.PI * 2);
   ctx.fill();
   ctx.restore();
 
-  // Event Horizon (The Black Center)
-  const holeGrad = ctx.createRadialGradient(bhX, bhY, 15, bhX, bhY, 28);
-  holeGrad.addColorStop(0, '#000000');
-  holeGrad.addColorStop(0.8, '#000000');
-  holeGrad.addColorStop(1, 'rgba(255, 120, 0, 0.8)');
-
-  ctx.fillStyle = holeGrad;
+  // Photon Ring (Bright inner rim)
+  const photonRing = ctx.createRadialGradient(bhX, bhY, coreRadius - 2, bhX, bhY, coreRadius + 8);
+  photonRing.addColorStop(0, '#ffffff');
+  photonRing.addColorStop(0.5, '#ff9900');
+  photonRing.addColorStop(1, 'transparent');
+  ctx.fillStyle = photonRing;
   ctx.beginPath();
-  ctx.arc(bhX, bhY, 28, 0, Math.PI * 2);
+  ctx.arc(bhX, bhY, coreRadius + 8, 0, Math.PI * 2);
   ctx.fill();
 
-  requestAnimationFrame(render);
-}
+  // Pitch Black Event Horizon Center
+  ctx.fillStyle = '#000000';
+  ctx.beginPath();
+  ctx.arc(bhX, bhY, coreRadius, 0, Math.PI * 2);
+  ctx.fill();
 
 window.addEventListener('resize', resize);
 resize();
