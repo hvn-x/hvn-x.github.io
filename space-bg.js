@@ -5,12 +5,13 @@ let width, height;
 let stars = [];
 let nebulaPuffs = [];
 
-// SUPERNOVA SEQUENCE STATE
-let novaState = 'STAR'; // STAR -> IMPLODE -> EXPLODE -> COMPLETE
+// SUPERNOVA STATE MACHINE
+let novaState = 'BUILDUP'; // BUILDUP -> IMPLODE -> SILENCE -> EXPLODE -> COMPLETE
 let novaTimer = 0;
-let starRadius = 28;
+let starRadius = 35;
 let flashAlpha = 0;
-let shockwaveRadius = 0;
+let innerShockwave = 0;
+let outerShockwave = 0;
 let shockwaveAlpha = 1;
 let novaParticles = [];
 
@@ -132,115 +133,157 @@ function render() {
     ctx.fill();
   }
 
-  // 3. BLACK HOLE & SUPERNOVA
+  // 3. SUPERNOVA SEQUENCE
   const bhX = width * 0.88;
   const bhY = height * 0.28;
   const coreRadius = 32;
 
   novaTimer++;
 
-  // --- STAGE 1: DYING STAR PRE-EXPLOSION ---
-  if (novaState === 'STAR') {
-    // Unstable Pulsing
-    const pulse = Math.sin(novaTimer * 0.1) * 3;
-    const currentRadius = starRadius + pulse;
+  // --- STAGE 1: UNSTABLE BUILDUP (Violent Tremor & Swell) ---
+  if (novaState === 'BUILDUP') {
+    const shakeX = (Math.random() - 0.5) * (novaTimer * 0.08);
+    const shakeY = (Math.random() - 0.5) * (novaTimer * 0.08);
+    const swell = Math.sin(novaTimer * 0.15) * 6 + (novaTimer * 0.1);
+    const currentRadius = starRadius + swell;
 
-    const starGlow = ctx.createRadialGradient(bhX, bhY, 0, bhX, bhY, currentRadius * 3);
+    const starGlow = ctx.createRadialGradient(bhX + shakeX, bhY + shakeY, 0, bhX + shakeX, bhY + shakeY, currentRadius * 3.5);
     starGlow.addColorStop(0, '#ffffff');
-    starGlow.addColorStop(0.3, '#ffaa00');
-    starGlow.addColorStop(0.7, 'rgba(255, 60, 0, 0.4)');
+    starGlow.addColorStop(0.2, '#ffcc00');
+    starGlow.addColorStop(0.6, 'rgba(255, 50, 0, 0.6)');
     starGlow.addColorStop(1, 'transparent');
 
     ctx.fillStyle = starGlow;
     ctx.beginPath();
-    ctx.arc(bhX, bhY, currentRadius * 3, 0, Math.PI * 2);
+    ctx.arc(bhX + shakeX, bhY + shakeY, currentRadius * 3.5, 0, Math.PI * 2);
     ctx.fill();
 
-    if (novaTimer > 120) novaState = 'IMPLODE';
+    // Pulling in initial cosmic dust
+    if (novaTimer % 2 === 0) {
+      const angle = Math.random() * Math.PI * 2;
+      const dist = Math.random() * 120 + 80;
+      novaParticles.push({
+        x: bhX + Math.cos(angle) * dist,
+        y: bhY + Math.sin(angle) * dist,
+        vx: -Math.cos(angle) * 4,
+        vy: -Math.sin(angle) * 4,
+        size: Math.random() * 2 + 1,
+        color: '#ffaa00',
+        alpha: 0.8,
+        suckingIn: true
+      });
+    }
+
+    if (novaTimer > 180) {
+      novaState = 'IMPLODE';
+      novaTimer = 0;
+    }
   }
 
-  // --- STAGE 2: IMPLOSION ---
+  // --- STAGE 2: GRAVITATIONAL IMPLOSION ---
   else if (novaState === 'IMPLODE') {
-    starRadius *= 0.85; // Shrink rapidly to a point
+    starRadius *= 0.82; // Crushes down inward
 
     ctx.fillStyle = '#ffffff';
     ctx.beginPath();
-    ctx.arc(bhX, bhY, Math.max(starRadius, 2), 0, Math.PI * 2);
+    ctx.arc(bhX, bhY, Math.max(starRadius, 1), 0, Math.PI * 2);
     ctx.fill();
 
-    if (starRadius < 3) {
+    if (starRadius < 1.5) {
+      novaState = 'SILENCE';
+      novaTimer = 0;
+    }
+  }
+
+  // --- STAGE 3: THE QUIET BEFORE THE STORM (Split second of complete dark) ---
+  else if (novaState === 'SILENCE') {
+    if (novaTimer > 15) { // 15 frames of ominous pause
       novaState = 'EXPLODE';
       flashAlpha = 1;
-      shockwaveRadius = 5;
+      innerShockwave = 10;
+      outerShockwave = 5;
 
-      // Spawn explosion debris
-      for (let i = 0; i < 60; i++) {
+      // Blast out heavy ejecta
+      novaParticles = [];
+      for (let i = 0; i < 90; i++) {
         const ang = Math.random() * Math.PI * 2;
-        const spd = Math.random() * 8 + 3;
+        const spd = Math.random() * 14 + 4;
         novaParticles.push({
           x: bhX,
           y: bhY,
           vx: Math.cos(ang) * spd,
           vy: Math.sin(ang) * spd,
-          size: Math.random() * 3 + 1,
+          size: Math.random() * 3.5 + 1.5,
           color: Math.random() > 0.3 ? '#ffaa00' : '#ffffff',
-          alpha: 1
+          alpha: 1,
+          suckingIn: false
         });
       }
     }
   }
 
-  // --- STAGE 3: EXPLOSION FLASH & SHOCKWAVE ---
+  // --- STAGE 4: MASSIVE SUPERNOVA BLAST ---
   if (novaState === 'EXPLODE') {
-    // Shockwave Ring
-    shockwaveRadius += 12;
-    shockwaveAlpha -= 0.025;
+    innerShockwave += 18;
+    outerShockwave += 8;
+    shockwaveAlpha -= 0.018;
 
+    // Dual Shockwave Rings
     if (shockwaveAlpha > 0) {
-      ctx.strokeStyle = `rgba(255, 200, 150, ${shockwaveAlpha})`;
-      ctx.lineWidth = 4;
+      ctx.strokeStyle = `rgba(255, 255, 255, ${shockwaveAlpha})`;
+      ctx.lineWidth = 6;
       ctx.beginPath();
-      ctx.arc(bhX, bhY, shockwaveRadius, 0, Math.PI * 2);
+      ctx.arc(bhX, bhY, innerShockwave, 0, Math.PI * 2);
+      ctx.stroke();
+
+      ctx.strokeStyle = `rgba(255, 120, 0, ${shockwaveAlpha * 0.7})`;
+      ctx.lineWidth = 12;
+      ctx.beginPath();
+      ctx.arc(bhX, bhY, outerShockwave, 0, Math.PI * 2);
       ctx.stroke();
     }
 
-    // Flying supernova debris
-    for (let p of novaParticles) {
-      p.x += p.vx;
-      p.y += p.vy;
-      p.vx *= 0.96;
-      p.vy *= 0.96;
-      p.alpha -= 0.015;
-
-      if (p.alpha > 0) {
-        ctx.fillStyle = p.color;
-        ctx.globalAlpha = Math.max(p.alpha, 0);
-        ctx.beginPath();
-        ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
-        ctx.fill();
-        ctx.globalAlpha = 1;
-      }
-    }
-
-    // Screen Flash Fadeout
+    // Heavy Screen Flash Fade
     if (flashAlpha > 0) {
-      const flashGlow = ctx.createRadialGradient(bhX, bhY, 0, bhX, bhY, 500);
+      const flashGlow = ctx.createRadialGradient(bhX, bhY, 0, bhX, bhY, 700);
       flashGlow.addColorStop(0, `rgba(255, 255, 255, ${flashAlpha})`);
-      flashGlow.addColorStop(0.5, `rgba(255, 120, 0, ${flashAlpha * 0.5})`);
+      flashGlow.addColorStop(0.3, `rgba(255, 140, 0, ${flashAlpha * 0.7})`);
+      flashGlow.addColorStop(0.8, `rgba(180, 20, 0, ${flashAlpha * 0.3})`);
       flashGlow.addColorStop(1, 'transparent');
 
       ctx.fillStyle = flashGlow;
       ctx.beginPath();
-      ctx.arc(bhX, bhY, 500, 0, Math.PI * 2);
+      ctx.arc(bhX, bhY, 700, 0, Math.PI * 2);
       ctx.fill();
 
-      flashAlpha -= 0.03;
+      flashAlpha -= 0.02;
     } else {
       novaState = 'COMPLETE';
     }
   }
 
-  // --- STAGE 4: STABLE BLACK HOLE ---
+  // Render & update active debris particles
+  for (let p of novaParticles) {
+    p.x += p.vx;
+    p.y += p.vy;
+
+    if (!p.suckingIn) {
+      p.vx *= 0.94; // Drag speed
+      p.vy *= 0.94;
+      p.alpha -= 0.012;
+    }
+
+    if (p.alpha > 0) {
+      ctx.fillStyle = p.color;
+      ctx.globalAlpha = Math.max(p.alpha, 0);
+      ctx.beginPath();
+      ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.globalAlpha = 1;
+    }
+  }
+
+  // --- STAGE 5: FINAL BLACK HOLE ---
   if (novaState === 'EXPLODE' || novaState === 'COMPLETE') {
     if (!window.bhParticles) {
       window.bhParticles = [];
