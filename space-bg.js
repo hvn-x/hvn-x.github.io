@@ -261,7 +261,7 @@ function render() {
     }
   }
 
-  // --- STAGE 5: TILTED BLACK HOLE & SWIRLING ACCRETION ---
+  // --- STAGE 5: TILTED BLACK HOLE & SMOOTH ACCRETION ---
   if (novaState === 'EXPLODE' || novaState === 'COMPLETE') {
     if (!window.bhParticles) {
       window.bhParticles = [];
@@ -269,7 +269,7 @@ function render() {
         window.bhParticles.push({
           angle: Math.random() * Math.PI * 2,
           dist: Math.random() * 90 + coreRadius + 15,
-          speed: Math.random() * 0.025 + 0.01,
+          speed: Math.random() * 0.012 + 0.005, // Smooth base rotation
           size: Math.random() * 2.5 + 1,
           color: Math.random() > 0.4 ? '#ffaa00' : '#ff4500'
         });
@@ -277,14 +277,14 @@ function render() {
     }
 
     // Spawn Infalling Particles along the plane
-    if (Math.random() < 0.5) {
+    if (Math.random() < 0.4) {
       const spawnAng = Math.random() * Math.PI * 2;
       const spawnDist = Math.random() * 120 + 170;
       infallingParticles.push({
         dist: spawnDist,
         angle: spawnAng,
-        spinSpeed: Math.random() * 0.04 + 0.03, // Faster rotational swirl
-        pullSpeed: Math.random() * 0.6 + 0.3, // Radial suction velocity
+        spinSpeed: Math.random() * 0.007 + 0.008, // Subtle rotational swirl
+        pullSpeed: Math.random() * 0.35 + 0.25,  // Smooth drift inward
         size: Math.random() * 2.8 + 1.8,
         color: Math.random() > 0.4 ? '#ffaa00' : '#ff3300'
       });
@@ -320,10 +320,10 @@ function render() {
     ctx.fill();
     ctx.restore();
 
-    // Render Swirling Infalling Particles
+    // Render Smooth Infalling Particles
     for (let i = infallingParticles.length - 1; i >= 0; i--) {
       let ip = infallingParticles[i];
-      ip.angle += ip.spinSpeed; // Spirals faster as it approaches core
+      ip.angle += ip.spinSpeed;
       ip.dist -= ip.pullSpeed;
 
       const px = Math.cos(ip.angle) * ip.dist;
@@ -343,7 +343,7 @@ function render() {
     // Orbiting Accretion Particles
     for (let p of window.bhParticles) {
       p.angle += p.speed;
-      p.dist -= 0.1;
+      p.dist -= 0.08;
       if (p.dist < coreRadius + 4) p.dist = Math.random() * 90 + coreRadius + 20;
       p.px = Math.cos(p.angle) * p.dist;
       p.py = Math.sin(p.angle) * (p.dist * 0.28);
