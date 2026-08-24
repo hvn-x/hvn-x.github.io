@@ -3,11 +3,13 @@ const ctx = canvas.getContext('2d');
 
 let width, height;
 let stars = [];
+let nebulaPuffs = [];
 
 function resize() {
   width = canvas.width = window.innerWidth;
   height = canvas.height = window.innerHeight;
   initStars();
+  initNebulae();
 }
 
 function initStars() {
@@ -24,37 +26,75 @@ function initStars() {
   }
 }
 
-// WARPED NEBULA FUNCTION (Asymmetrical cosmic clouds)
-function drawWarpedNebula(x, y, radius, color, scaleX = 1.5, scaleY = 0.8, rotation = 0.2) {
+// GENERATE RANDOM OVERLAPPING NEBULA CLUSTERS
+function initNebulae() {
+  nebulaPuffs = [];
+  
+  // Palette for multi-color space dust
+  const colors = [
+    'rgba(255, 90, 0, ',    // Neon Cosmic Orange
+    'rgba(200, 20, 80, ',   // Deep Magenta
+    'rgba(120, 0, 180, ',   // Galactic Violet
+    'rgba(20, 80, 180, ',   // Deep Electric Blue
+    'rgba(255, 140, 20, '   // Ember Gold
+  ];
+
+  // Create 4 distinct main clusters around the screen
+  const centers = [
+    { x: width * 0.18, y: height * 0.25 }, // Top-left
+    { x: width * 0.82, y: height * 0.32 }, // Top-right (Black hole region)
+    { x: width * 0.30, y: height * 0.75 }, // Bottom-left
+    { x: width * 0.70, y: height * 0.80 }  // Bottom-right
+  ];
+
+  centers.forEach(center => {
+    // Each cluster gets 12-18 overlapping gas puffs
+    const puffCount = Math.floor(Math.random() * 7) + 12;
+    for (let i = 0; i < puffCount; i++) {
+      nebulaPuffs.push({
+        x: center.x + (Math.random() - 0.5) * 350,
+        y: center.y + (Math.random() - 0.5) * 250,
+        radius: Math.random() * 180 + 100,
+        scaleX: Math.random() * 1.2 + 0.8,
+        scaleY: Math.random() * 0.8 + 0.4,
+        rotation: Math.random() * Math.PI,
+        colorBase: colors[Math.floor(Math.random() * colors.length)],
+        opacity: (Math.random() * 0.04 + 0.015).toFixed(3) // Keeps it subtle & layered
+      });
+    }
+  });
+}
+
+function drawNebulae() {
   ctx.save();
-  ctx.translate(x, y);
-  ctx.rotate(rotation);
-  ctx.scale(scaleX, scaleY);
+  ctx.globalCompositeOperation = 'screen'; // Crucial for colorful overlapping blends!
 
-  const gradient = ctx.createRadialGradient(0, 0, 0, 0, 0, radius);
-  gradient.addColorStop(0, color);
-  gradient.addColorStop(0.5, color.replace(/[\d\.]+\)$/, '0.03)')); // Soft mid-fade
-  gradient.addColorStop(1, 'transparent');
+  for (let puff of nebulaPuffs) {
+    ctx.save();
+    ctx.translate(puff.x, puff.y);
+    ctx.rotate(puff.rotation);
+    ctx.scale(puff.scaleX, puff.scaleY);
 
-  ctx.fillStyle = gradient;
-  ctx.beginPath();
-  ctx.arc(0, 0, radius, 0, Math.PI * 2);
-  ctx.fill();
+    const grad = ctx.createRadialGradient(0, 0, 0, 0, 0, puff.radius);
+    grad.addColorStop(0, puff.colorBase + puff.opacity + ')');
+    grad.addColorStop(0.5, puff.colorBase + (puff.opacity * 0.4) + ')');
+    grad.addColorStop(1, 'transparent');
+
+    ctx.fillStyle = grad;
+    ctx.beginPath();
+    ctx.arc(0, 0, puff.radius, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.restore();
+  }
+  
   ctx.restore();
 }
 
 function render() {
   ctx.clearRect(0, 0, width, height);
 
-  // 1. NEBULAS (Warped atmospheric gas clouds)
-  // Dusty orange cloud (Top Left)
-  drawWarpedNebula(width * 0.15, height * 0.25, 450, 'rgba(255, 90, 0, 0.07)', 1.8, 0.6, -0.4);
-  
-  // Crimson cloud around black hole area (Top Right)
-  drawWarpedNebula(width * 0.85, height * 0.3, 500, 'rgba(200, 30, 10, 0.06)', 1.2, 0.9, 0.5);
-  
-  // Subtle deep void (Bottom Center)
-  drawWarpedNebula(width * 0.5, height * 0.65, 600, 'rgba(90, 15, 110, 0.04)', 1.6, 0.7, -0.2);
+  // 1. DYNAMIC NEBULAE CLUSTERS
+  drawNebulae();
 
   // 2. STARS
   for (let star of stars) {
@@ -72,7 +112,6 @@ function render() {
   const bhY = height * 0.28;
   const coreRadius = 32;
 
-  // Initialize particles once
   if (!window.bhParticles) {
     window.bhParticles = [];
     for (let i = 0; i < 35; i++) {
@@ -86,7 +125,7 @@ function render() {
     }
   }
 
-  // 3a. Far Ambient Glow
+  // Ambient Glow
   const outerGlow = ctx.createRadialGradient(bhX, bhY, coreRadius, bhX, bhY, 150);
   outerGlow.addColorStop(0, 'rgba(255, 100, 0, 0.25)');
   outerGlow.addColorStop(0.5, 'rgba(255, 40, 0, 0.08)');
@@ -96,7 +135,7 @@ function render() {
   ctx.arc(bhX, bhY, 150, 0, Math.PI * 2);
   ctx.fill();
 
-  // 3b. Main Accretion Ring (Background Glow)
+  // Ring Background Glow
   const ringGrad = ctx.createRadialGradient(bhX, bhY, coreRadius, bhX, bhY, 110);
   ringGrad.addColorStop(0, '#ffaa00');
   ringGrad.addColorStop(0.3, '#ff5500');
@@ -112,7 +151,7 @@ function render() {
   ctx.fill();
   ctx.restore();
 
-  // Update positions for all particles
+  // Particle updates
   for (let p of window.bhParticles) {
     p.angle += p.speed;
     p.dist -= 0.12;
@@ -121,7 +160,7 @@ function render() {
     p.y = bhY + Math.sin(p.angle) * (p.dist * 0.28);
   }
 
-  // 3c. Draw BACK particles (behind event horizon)
+  // BACK particles
   for (let p of window.bhParticles) {
     if (p.y < bhY) {
       ctx.fillStyle = p.color;
@@ -131,13 +170,13 @@ function render() {
     }
   }
 
-  // 3d. Solid Pitch Black Event Horizon Center
+  // Pitch Black Core
   ctx.fillStyle = '#000000';
   ctx.beginPath();
   ctx.arc(bhX, bhY, coreRadius, 0, Math.PI * 2);
   ctx.fill();
 
-  // 3e. Thin Outer Rim Glow
+  // Rim Glow
   ctx.strokeStyle = '#ffaa00';
   ctx.lineWidth = 2;
   ctx.shadowColor = '#ff5500';
@@ -145,9 +184,9 @@ function render() {
   ctx.beginPath();
   ctx.arc(bhX, bhY, coreRadius + 1, 0, Math.PI * 2);
   ctx.stroke();
-  ctx.shadowBlur = 0; // Reset blur
+  ctx.shadowBlur = 0;
 
-  // 3f. Draw FRONT particles (in front of event horizon)
+  // FRONT particles
   for (let p of window.bhParticles) {
     if (p.y >= bhY) {
       ctx.fillStyle = p.color;
