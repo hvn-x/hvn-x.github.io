@@ -77,17 +77,32 @@ function drawNebulae() {
 
     const grad = ctx.createRadialGradient(0, 0, 0, 0, 0, puff.radius);
     
-    // Smoother gradient curve with multiple stops stops color banding/lines
+    // Smooth multi-stop gradient
     const opacityNum = parseFloat(puff.opacity);
-    grad.addColorStop(0, puff.colorBase + (opacityNum * 1.2) + ')');
-    grad.addColorStop(0.3, puff.colorBase + (opacityNum * 0.6) + ')');
-    grad.addColorStop(0.7, puff.colorBase + (opacityNum * 0.15) + ')');
-    grad.addColorStop(1, 'rgba(0, 0, 0, 0)');
+    grad.addColorStop(0, puff.colorBase + (opacityNum * 1.4) + ')');
+    grad.addColorStop(0.2, puff.colorBase + (opacityNum * 0.8) + ')');
+    grad.addColorStop(0.5, puff.colorBase + (opacityNum * 0.35) + ')');
+    grad.addColorStop(0.8, puff.colorBase + (opacityNum * 0.1) + ')');
+    grad.addColorStop(1, 'rgba(0,0,0,0)');
 
     ctx.fillStyle = grad;
     ctx.beginPath();
     ctx.arc(0, 0, puff.radius, 0, Math.PI * 2);
     ctx.fill();
+
+    // DITHERING NOISE LAYER (Destroys color banding rings)
+    const noiseCount = Math.floor(puff.radius * 0.4);
+    for (let i = 0; i < noiseCount; i++) {
+      const nr = Math.random() * puff.radius * 0.85;
+      const na = Math.random() * Math.PI * 2;
+      const nx = Math.cos(na) * nr;
+      const ny = Math.sin(na) * nr;
+      const alpha = (Math.random() * opacityNum * 0.8).toFixed(4);
+      
+      ctx.fillStyle = `rgba(255, 255, 255, ${alpha})`;
+      ctx.fillRect(nx, ny, 1, 1);
+    }
+
     ctx.restore();
   }
   
