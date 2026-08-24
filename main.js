@@ -1,4 +1,4 @@
-// SEARCH BAR (Only runs if search input exists on page)
+// SEARCH BAR
 const searchInput = document.getElementById('search-input');
 if (searchInput) {
   searchInput.addEventListener('input', () => {
@@ -8,7 +8,8 @@ if (searchInput) {
     const matchedGames = games.filter(game => game.innerText.toLowerCase().includes(searchTerm));
 
     games.forEach(game => game.style.display = 'none');
-    matchedGames.forEach(game => game.style.display = 'block');
+    // Using flex so vertical text centering stays intact
+    matchedGames.forEach(game => game.style.display = 'flex'); 
   });
 }
 
@@ -33,7 +34,7 @@ document.addEventListener("keydown", function (e) {
   }
 });
 
-// BUTTON LISTENER (Safely handled)
+// BUTTON LISTENER (Page freeze trigger)
 const crashBtn = document.querySelector('button');
 if (crashBtn) {
   crashBtn.addEventListener('click', () => {
