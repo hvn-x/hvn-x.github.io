@@ -261,7 +261,7 @@ function render() {
     }
   }
 
-  // --- STAGE 5: TILTED BLACK HOLE & ALIGNED ACCRETION ---
+  // --- STAGE 5: TILTED BLACK HOLE & SWIRLING ACCRETION ---
   if (novaState === 'EXPLODE' || novaState === 'COMPLETE') {
     if (!window.bhParticles) {
       window.bhParticles = [];
@@ -277,14 +277,15 @@ function render() {
     }
 
     // Spawn Infalling Particles along the plane
-    if (Math.random() < 0.4) {
+    if (Math.random() < 0.5) {
       const spawnAng = Math.random() * Math.PI * 2;
       const spawnDist = Math.random() * 120 + 170;
       infallingParticles.push({
         dist: spawnDist,
         angle: spawnAng,
-        speed: Math.random() * 0.4 + 0.3, // Slower, heavier motion
-        size: Math.random() * 2.8 + 1.8,  // More prominent size
+        spinSpeed: Math.random() * 0.04 + 0.03, // Faster rotational swirl
+        pullSpeed: Math.random() * 0.6 + 0.3, // Radial suction velocity
+        size: Math.random() * 2.8 + 1.8,
         color: Math.random() > 0.4 ? '#ffaa00' : '#ff3300'
       });
     }
@@ -319,11 +320,11 @@ function render() {
     ctx.fill();
     ctx.restore();
 
-    // Render Infalling Particles aligned to disk plane
+    // Render Swirling Infalling Particles
     for (let i = infallingParticles.length - 1; i >= 0; i--) {
       let ip = infallingParticles[i];
-      ip.dist -= ip.speed;
-      ip.angle += 0.015; // Slow spiral spin
+      ip.angle += ip.spinSpeed; // Spirals faster as it approaches core
+      ip.dist -= ip.pullSpeed;
 
       const px = Math.cos(ip.angle) * ip.dist;
       const py = Math.sin(ip.angle) * (ip.dist * 0.28);
