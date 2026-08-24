@@ -100,7 +100,8 @@ h1, h2 {
 }
 
 #search-input:focus {
-  border-color: #ffaa00;
+  border-color: #ff6b00;
+  background: rgba(255, 102, 0, 0.18);
   box-shadow: 0 0 20px rgba(255, 170, 0, 0.5);
 }
 
