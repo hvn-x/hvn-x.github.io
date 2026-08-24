@@ -30,7 +30,6 @@ function initStars() {
 function initNebulae() {
   nebulaPuffs = [];
   
-  // Palette for multi-color space dust
   const colors = [
     'rgba(255, 90, 0, ',    // Neon Cosmic Orange
     'rgba(200, 20, 80, ',   // Deep Magenta
@@ -39,16 +38,14 @@ function initNebulae() {
     'rgba(255, 140, 20, '   // Ember Gold
   ];
 
-  // Create 4 distinct main clusters around the screen
   const centers = [
-    { x: width * 0.18, y: height * 0.25 }, // Top-left
-    { x: width * 0.82, y: height * 0.32 }, // Top-right (Black hole region)
-    { x: width * 0.30, y: height * 0.75 }, // Bottom-left
-    { x: width * 0.70, y: height * 0.80 }  // Bottom-right
+    { x: width * 0.18, y: height * 0.25 },
+    { x: width * 0.82, y: height * 0.32 },
+    { x: width * 0.30, y: height * 0.75 },
+    { x: width * 0.70, y: height * 0.80 }
   ];
 
   centers.forEach(center => {
-    // Each cluster gets 12-18 overlapping gas puffs
     const puffCount = Math.floor(Math.random() * 7) + 12;
     for (let i = 0; i < puffCount; i++) {
       nebulaPuffs.push({
@@ -59,7 +56,9 @@ function initNebulae() {
         scaleY: Math.random() * 0.8 + 0.4,
         rotation: Math.random() * Math.PI,
         colorBase: colors[Math.floor(Math.random() * colors.length)],
-        opacity: (Math.random() * 0.04 + 0.015).toFixed(3) // Keeps it subtle & layered
+        baseOpacity: parseFloat((Math.random() * 0.04 + 0.015).toFixed(3)),
+        pulseOffset: Math.random() * Math.PI * 2,
+        pulseSpeed: Math.random() * 0.0008 + 0.0004
       });
     }
   });
@@ -68,21 +67,25 @@ function initNebulae() {
 function drawNebulae() {
   ctx.save();
   ctx.globalCompositeOperation = 'screen';
+  
+  const time = performance.now();
 
   for (let puff of nebulaPuffs) {
+    const breath = Math.sin(time * puff.pulseSpeed + puff.pulseOffset);
+    const currentOpacity = puff.baseOpacity + (breath * 0.006);
+    const scalePulse = 1 + (breath * 0.04);
+
     ctx.save();
     ctx.translate(puff.x, puff.y);
     ctx.rotate(puff.rotation);
-    ctx.scale(puff.scaleX, puff.scaleY);
+    ctx.scale(puff.scaleX * scalePulse, puff.scaleY * scalePulse);
 
     const grad = ctx.createRadialGradient(0, 0, 0, 0, 0, puff.radius);
     
-    // Smooth multi-stop gradient
-    const opacityNum = parseFloat(puff.opacity);
-    grad.addColorStop(0, puff.colorBase + (opacityNum * 1.4) + ')');
-    grad.addColorStop(0.2, puff.colorBase + (opacityNum * 0.8) + ')');
-    grad.addColorStop(0.5, puff.colorBase + (opacityNum * 0.35) + ')');
-    grad.addColorStop(0.8, puff.colorBase + (opacityNum * 0.1) + ')');
+    grad.addColorStop(0, puff.colorBase + (currentOpacity * 1.4) + ')');
+    grad.addColorStop(0.2, puff.colorBase + (currentOpacity * 0.8) + ')');
+    grad.addColorStop(0.5, puff.colorBase + (currentOpacity * 0.35) + ')');
+    grad.addColorStop(0.8, puff.colorBase + (currentOpacity * 0.1) + ')');
     grad.addColorStop(1, 'rgba(0,0,0,0)');
 
     ctx.fillStyle = grad;
@@ -90,14 +93,13 @@ function drawNebulae() {
     ctx.arc(0, 0, puff.radius, 0, Math.PI * 2);
     ctx.fill();
 
-    // DITHERING NOISE LAYER (Destroys color banding rings)
-    const noiseCount = Math.floor(puff.radius * 0.4);
+    const noiseCount = Math.floor(puff.radius * 0.3);
     for (let i = 0; i < noiseCount; i++) {
       const nr = Math.random() * puff.radius * 0.85;
       const na = Math.random() * Math.PI * 2;
       const nx = Math.cos(na) * nr;
       const ny = Math.sin(na) * nr;
-      const alpha = (Math.random() * opacityNum * 0.8).toFixed(4);
+      const alpha = (Math.random() * currentOpacity * 0.8).toFixed(4);
       
       ctx.fillStyle = `rgba(255, 255, 255, ${alpha})`;
       ctx.fillRect(nx, ny, 1, 1);
@@ -112,7 +114,7 @@ function drawNebulae() {
 function render() {
   ctx.clearRect(0, 0, width, height);
 
-  // 1. DYNAMIC NEBULAE CLUSTERS
+  // 1. NEBULAE
   drawNebulae();
 
   // 2. STARS
@@ -126,7 +128,7 @@ function render() {
     ctx.fill();
   }
 
-  // 3. ACCRETION BLACK HOLE
+  // 3. BLACK HOLE
   const bhX = width * 0.88;
   const bhY = height * 0.28;
   const coreRadius = 32;
@@ -154,7 +156,7 @@ function render() {
   ctx.arc(bhX, bhY, 150, 0, Math.PI * 2);
   ctx.fill();
 
-  // Ring Background Glow
+  // Ring Glow
   const ringGrad = ctx.createRadialGradient(bhX, bhY, coreRadius, bhX, bhY, 110);
   ringGrad.addColorStop(0, '#ffaa00');
   ringGrad.addColorStop(0.3, '#ff5500');
@@ -170,7 +172,7 @@ function render() {
   ctx.fill();
   ctx.restore();
 
-  // Particle updates
+  // Update particles
   for (let p of window.bhParticles) {
     p.angle += p.speed;
     p.dist -= 0.12;
@@ -179,7 +181,7 @@ function render() {
     p.y = bhY + Math.sin(p.angle) * (p.dist * 0.28);
   }
 
-  // BACK particles
+  // Back particles
   for (let p of window.bhParticles) {
     if (p.y < bhY) {
       ctx.fillStyle = p.color;
@@ -189,7 +191,7 @@ function render() {
     }
   }
 
-  // Pitch Black Core
+  // Black Core
   ctx.fillStyle = '#000000';
   ctx.beginPath();
   ctx.arc(bhX, bhY, coreRadius, 0, Math.PI * 2);
@@ -205,7 +207,7 @@ function render() {
   ctx.stroke();
   ctx.shadowBlur = 0;
 
-  // FRONT particles
+  // Front particles
   for (let p of window.bhParticles) {
     if (p.y >= bhY) {
       ctx.fillStyle = p.color;
