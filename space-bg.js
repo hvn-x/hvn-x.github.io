@@ -67,7 +67,7 @@ function initNebulae() {
 
 function drawNebulae() {
   ctx.save();
-  ctx.globalCompositeOperation = 'screen'; // Crucial for colorful overlapping blends!
+  ctx.globalCompositeOperation = 'screen';
 
   for (let puff of nebulaPuffs) {
     ctx.save();
@@ -76,9 +76,13 @@ function drawNebulae() {
     ctx.scale(puff.scaleX, puff.scaleY);
 
     const grad = ctx.createRadialGradient(0, 0, 0, 0, 0, puff.radius);
-    grad.addColorStop(0, puff.colorBase + puff.opacity + ')');
-    grad.addColorStop(0.5, puff.colorBase + (puff.opacity * 0.4) + ')');
-    grad.addColorStop(1, 'transparent');
+    
+    // Smoother gradient curve with multiple stops stops color banding/lines
+    const opacityNum = parseFloat(puff.opacity);
+    grad.addColorStop(0, puff.colorBase + (opacityNum * 1.2) + ')');
+    grad.addColorStop(0.3, puff.colorBase + (opacityNum * 0.6) + ')');
+    grad.addColorStop(0.7, puff.colorBase + (opacityNum * 0.15) + ')');
+    grad.addColorStop(1, 'rgba(0, 0, 0, 0)');
 
     ctx.fillStyle = grad;
     ctx.beginPath();
