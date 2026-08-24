@@ -137,8 +137,8 @@ function render() {
   // 3. SUPERNOVA & BLACK HOLE
   const bhX = width * 0.86;
   const bhY = height * 0.28;
-  const coreRadius = 45; // Bigger core size
-  const tiltAngle = -Math.PI / 4; // -45 degree tilt
+  const coreRadius = 45; 
+  const tiltAngle = -Math.PI / 4; 
 
   novaTimer++;
 
@@ -168,7 +168,7 @@ function render() {
 
   // --- STAGE 2: IMPLOSION ---
   else if (novaState === 'IMPLODE') {
-    starRadius *= 0.80; // Crushes inward
+    starRadius *= 0.80;
 
     ctx.fillStyle = '#ffffff';
     ctx.beginPath();
@@ -181,15 +181,14 @@ function render() {
     }
   }
 
-  // --- STAGE 3: THE OMINOUS SILENCE (Extended hold) ---
+  // --- STAGE 3: THE OMINOUS SILENCE ---
   else if (novaState === 'SILENCE') {
-    if (novaTimer > 45) { // ~0.75 seconds of complete black space
+    if (novaTimer > 45) {
       novaState = 'EXPLODE';
       flashAlpha = 1;
       innerShockwave = 10;
       outerShockwave = 5;
 
-      // Supernova explosion particles
       novaParticles = [];
       for (let i = 0; i < 110; i++) {
         const ang = Math.random() * Math.PI * 2;
@@ -213,7 +212,6 @@ function render() {
     outerShockwave += 9;
     shockwaveAlpha -= 0.015;
 
-    // Dual Shockwave Rings
     if (shockwaveAlpha > 0) {
       ctx.strokeStyle = `rgba(255, 255, 255, ${shockwaveAlpha})`;
       ctx.lineWidth = 6;
@@ -228,7 +226,6 @@ function render() {
       ctx.stroke();
     }
 
-    // Screen Flash Fade
     if (flashAlpha > 0) {
       const flashGlow = ctx.createRadialGradient(bhX, bhY, 0, bhX, bhY, 800);
       flashGlow.addColorStop(0, `rgba(255, 255, 255, ${flashAlpha})`);
@@ -247,7 +244,6 @@ function render() {
     }
   }
 
-  // Render Nova Debris
   for (let p of novaParticles) {
     p.x += p.vx;
     p.y += p.vy;
@@ -265,9 +261,8 @@ function render() {
     }
   }
 
-  // --- STAGE 5: TILTED BLACK HOLE & INFALLING ACCRETION ---
+  // --- STAGE 5: TILTED BLACK HOLE & ALIGNED ACCRETION ---
   if (novaState === 'EXPLODE' || novaState === 'COMPLETE') {
-    // Initialize Orbiting Particles
     if (!window.bhParticles) {
       window.bhParticles = [];
       for (let i = 0; i < 45; i++) {
@@ -281,47 +276,25 @@ function render() {
       }
     }
 
-    // Spawn Infalling Matter (Particles sucked in from outside space)
-    if (Math.random() < 0.6) {
+    // Spawn Infalling Particles along the plane
+    if (Math.random() < 0.4) {
       const spawnAng = Math.random() * Math.PI * 2;
-      const spawnDist = Math.random() * 180 + 160;
+      const spawnDist = Math.random() * 120 + 170;
       infallingParticles.push({
-        x: bhX + Math.cos(spawnAng) * spawnDist,
-        y: bhY + Math.sin(spawnAng) * spawnDist,
         dist: spawnDist,
         angle: spawnAng,
-        speed: Math.random() * 2 + 1.5,
-        size: Math.random() * 2 + 0.8,
-        color: Math.random() > 0.5 ? '#ffaa00' : '#ff3300'
+        speed: Math.random() * 0.4 + 0.3, // Slower, heavier motion
+        size: Math.random() * 2.8 + 1.8,  // More prominent size
+        color: Math.random() > 0.4 ? '#ffaa00' : '#ff3300'
       });
     }
 
-    // Update & Render Infalling Particles
-    for (let i = infallingParticles.length - 1; i >= 0; i--) {
-      let ip = infallingParticles[i];
-      ip.dist -= ip.speed;
-      ip.angle += 0.03; // Spiral path
-      
-      ip.x = bhX + Math.cos(ip.angle) * ip.dist;
-      ip.y = bhY + Math.sin(ip.angle) * (ip.dist * 0.3); // Follow disk slope
-
-      if (ip.dist <= coreRadius + 5) {
-        infallingParticles.splice(i, 1);
-        continue;
-      }
-
-      ctx.fillStyle = ip.color;
-      ctx.beginPath();
-      ctx.arc(ip.x, ip.y, ip.size, 0, Math.PI * 2);
-      ctx.fill();
-    }
-
-    // --- APPLY -45 DEGREE TILT MATRIX TO BLACK HOLE ---
+    // --- APPLY TILTED TRANSFORM MATRIX ---
     ctx.save();
     ctx.translate(bhX, bhY);
     ctx.rotate(tiltAngle);
 
-    // Ambient Glow
+    // Ambient Outer Glow
     const outerGlow = ctx.createRadialGradient(0, 0, coreRadius, 0, 0, 200);
     outerGlow.addColorStop(0, 'rgba(255, 100, 0, 0.3)');
     outerGlow.addColorStop(0.5, 'rgba(255, 40, 0, 0.1)');
@@ -340,13 +313,33 @@ function render() {
 
     ctx.save();
     ctx.fillStyle = ringGrad;
-    ctx.scale(1, 0.28); // Flattened disc scale
+    ctx.scale(1, 0.28);
     ctx.beginPath();
     ctx.arc(0, 0, 150, 0, Math.PI * 2);
     ctx.fill();
     ctx.restore();
 
-    // Orbit Particle Mechanics
+    // Render Infalling Particles aligned to disk plane
+    for (let i = infallingParticles.length - 1; i >= 0; i--) {
+      let ip = infallingParticles[i];
+      ip.dist -= ip.speed;
+      ip.angle += 0.015; // Slow spiral spin
+
+      const px = Math.cos(ip.angle) * ip.dist;
+      const py = Math.sin(ip.angle) * (ip.dist * 0.28);
+
+      if (ip.dist <= coreRadius + 2) {
+        infallingParticles.splice(i, 1);
+        continue;
+      }
+
+      ctx.fillStyle = ip.color;
+      ctx.beginPath();
+      ctx.arc(px, py, ip.size, 0, Math.PI * 2);
+      ctx.fill();
+    }
+
+    // Orbiting Accretion Particles
     for (let p of window.bhParticles) {
       p.angle += p.speed;
       p.dist -= 0.1;
@@ -355,7 +348,7 @@ function render() {
       p.py = Math.sin(p.angle) * (p.dist * 0.28);
     }
 
-    // Back Particles (behind event horizon)
+    // Back Particles
     for (let p of window.bhParticles) {
       if (p.py < 0) {
         ctx.fillStyle = p.color;
@@ -365,23 +358,39 @@ function render() {
       }
     }
 
-    // Event Horizon (Black Void Core)
+    // Blurred Event Horizon Base
+    ctx.save();
+    ctx.shadowColor = 'rgba(0, 0, 0, 0.9)';
+    ctx.shadowBlur = 18;
     ctx.fillStyle = '#000000';
     ctx.beginPath();
     ctx.arc(0, 0, coreRadius, 0, Math.PI * 2);
     ctx.fill();
+    ctx.restore();
 
-    // Photonic Rim Glow
-    ctx.strokeStyle = '#ffcc00';
-    ctx.lineWidth = 2.5;
-    ctx.shadowColor = '#ff5500';
-    ctx.shadowBlur = 14;
+    // Soft Gravitational Lens Edge (Feathered Rim)
+    const softEdge = ctx.createRadialGradient(0, 0, coreRadius - 12, 0, 0, coreRadius + 6);
+    softEdge.addColorStop(0, '#000000');
+    softEdge.addColorStop(0.65, 'rgba(0, 0, 0, 0.95)');
+    softEdge.addColorStop(0.85, 'rgba(255, 140, 0, 0.4)');
+    softEdge.addColorStop(1, 'transparent');
+
+    ctx.fillStyle = softEdge;
     ctx.beginPath();
-    ctx.arc(0, 0, coreRadius + 1, 0, Math.PI * 2);
+    ctx.arc(0, 0, coreRadius + 6, 0, Math.PI * 2);
+    ctx.fill();
+
+    // Outer Photonic Halo
+    ctx.strokeStyle = 'rgba(255, 180, 50, 0.6)';
+    ctx.lineWidth = 3;
+    ctx.shadowColor = '#ff5500';
+    ctx.shadowBlur = 20;
+    ctx.beginPath();
+    ctx.arc(0, 0, coreRadius, 0, Math.PI * 2);
     ctx.stroke();
     ctx.shadowBlur = 0;
 
-    // Front Particles (in front of event horizon)
+    // Front Particles
     for (let p of window.bhParticles) {
       if (p.py >= 0) {
         ctx.fillStyle = p.color;
@@ -391,7 +400,7 @@ function render() {
       }
     }
 
-    ctx.restore(); // Restore tilt transform matrix
+    ctx.restore();
   }
 
   requestAnimationFrame(render);
